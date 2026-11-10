@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Вход VK — HistoryFactory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Вход VK</h1>
+  <p class="lead" id="status">Передаю ответ VK программе HistoryFactory на этом компьютере…</p>
+  <p id="fallback" hidden>Если ничего не произошло, убедитесь, что скрипт входа запущен, и обновите страницу.</p>
+</main>
+<script>
+  // VK ID требует https-адрес возврата, а скрипт входа ждёт ответа на localhost.
+  // Страница ничего не хранит и никуда не отправляет — только перенаправляет
+  // параметры ответа на локальный компьютер. Сам код без секрета PKCE бесполезен.
+  (function () {
+    var q = window.location.search;
+    if (!q || q.indexOf("code=") === -1) {
+      document.getElementById("status").textContent =
+        q.indexOf("error") !== -1 ? "VK вернул ошибку входа. Вернитесь в программу и попробуйте ещё раз." : "Нет данных входа.";
+      return;
+    }
+    window.location.replace("http://localhost:8765/callback" + q);
+    setTimeout(function () { document.getElementById("fallback").hidden = false; }, 4000);
+  })();
+</script>
+</body>
+</html>
